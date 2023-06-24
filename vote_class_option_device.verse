@@ -9,14 +9,15 @@ using { /UnrealEngine.com/Temporary/Diagnostics }
 vote_class_option_device := class(creative_device):
 
     @editable VoteManager : vote_manager_device = vote_manager_device{}
-    @editable Teleporter :teleporter_device  = teleporter_device{} 
+    @editable VoteButton : button_device  = button_device{} 
     @editable Billboard : billboard_device = billboard_device{}
+    @editable ClassAndTeamSelector : class_and_team_selector_device = class_and_team_selector_device{}
     @editable ClassID : int = 0
 
     OnBegin<override>()<suspends>:void=
-        Teleporter.EnterEvent.Subscribe(PlayerEntersTeleporter)
+        VoteButton.InteractedWithEvent.Subscribe(PlayerVotes)
 
-    PlayerEntersTeleporter(AgentIn : agent) : void =
+    PlayerVotes(AgentIn : agent) : void =
         #Print("Vote For Class Upcoming.")
         VoteManager.VoteForClass(AgentIn, ClassID)
         #Print("Billboard Update Coming.")
@@ -27,3 +28,13 @@ vote_class_option_device := class(creative_device):
         Billboard.SetText(StringToMessage(ToString(ClassVotes)))
 
     StringToMessage<localizes>(value:string) : message = "{value}"
+
+    GetClassID() : int =
+        return ClassID
+
+    SetAllPlayersToClass() : void =
+        WorldPlayers := GetPlayspace().GetPlayers()
+        for (Player : WorldPlayers):
+            Print("Setting Player Class")
+            ClassAndTeamSelector.ChangeClass(Player)
+        return

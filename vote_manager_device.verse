@@ -12,7 +12,6 @@ vote_manager_device := class(creative_device):
 
     var CurrentClassVotes : [player]int = map{}
     @editable TotalClassCount : int = 4
-    @editable ClassAndTeamSelectors : []class_and_team_selector_device = array {}
     @editable VoteClassOptionDevices : []vote_class_option_device = array{}
 
     # Runs when the device is started in a running game
@@ -21,7 +20,7 @@ vote_manager_device := class(creative_device):
 
     GetWinnerAndSetClass(): void =
         WinningClass := GetWinningClass()
-        SetAllPlayersToClass(WinningClass)
+        SelectWinningClassAndSend(WinningClass)
 
     VoteForClass(AgentIn : agent, ClassIn : int):void =
         if (Player := player[AgentIn]):
@@ -53,12 +52,11 @@ vote_manager_device := class(creative_device):
         Print("Winning Class: {intWinningClass}")
         return intWinningClass
 
-    SetAllPlayersToClass(ClassIDIn : int) : void =
-        if (ClassAndTeamSelector := ClassAndTeamSelectors[ClassIDIn-1]):
-            WorldPlayers := GetPlayspace().GetPlayers()
-            for (Player : WorldPlayers):
-                Print("Setting Player Class")
-                ClassAndTeamSelector.ChangeClass(Player)
+    SelectWinningClassAndSend(ClassIDIn : int) : void =
+        for(currentVoteClassOptionDevice : VoteClassOptionDevices) :
+            var currentClassID : int = currentVoteClassOptionDevice.GetClassID()
+            if (currentClassID = ClassIDIn):
+                currentVoteClassOptionDevice.SetAllPlayersToClass()
         return
 
     UpdateOptionBillboards() : void =

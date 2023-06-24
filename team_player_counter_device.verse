@@ -4,9 +4,6 @@ using { /Verse.org/Simulation }
 using { /Verse.org/Verse }
 using { /UnrealEngine.com/Temporary/Diagnostics }
 
-# See https://dev.epicgames.com/documentation/en-us/uefn/create-your-own-device-in-verse for how to create a verse device.
-
-# A Verse-authored creative device that can be placed in a level
 team_player_counter_device := class(creative_device):
     var TeamOneCount : int = 0
     var TeamTwoCount : int = 0
